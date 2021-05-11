@@ -23,6 +23,7 @@
     (has_glass)
     (has_water)
     (banana_ground_level)
+    (glass_ground_level)
   )
 
   (:action go
@@ -57,8 +58,8 @@
 
   (:action take_glass
     :parameters (?position - location)
-    :precondition (and (not (low)) (not (has_glass)) (at monkey ?position) (at glass ?position))
-    :effect (and (has_glass) (not (at glass ?position)))
+    :precondition (and (or (not (low)) (glass_ground_level)) (not (has_glass)) (at monkey ?position) (at glass ?position))
+    :effect (and (has_glass) (not (at glass ?position)) (glass_ground_level))
   )
 
   (:action release_banana
@@ -81,7 +82,7 @@
 
   (:action push_box
     :parameters (?source ?destination - location)
-    :precondition (and (low) (not (has_banana)) (at monkey ?source) (at box ?source))
+    :precondition (and (low) (not (has_banana)) (not (has_knife)) (not (has_glass)) (at monkey ?source) (at box ?source))
     :effect (and (at box ?destination) (not (at box ?source)) (at monkey ?destination) (not (at monkey ?source)))
   )
 

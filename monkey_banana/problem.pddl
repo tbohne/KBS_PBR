@@ -14,6 +14,7 @@
     (not(has_water))
     (not(has_glass))
     (not(banana_ground_level))
+    (not(glass_ground_level))
     (at monkey p1)
     (at banana p3)
     (at box p2)
@@ -23,6 +24,6 @@
   )
 
   (:goal
-    (and (has_banana) (has_water) (or (and (at box p1) (at knife p1) (not (at monkey p1))) (and (at box p6) (at knife p6) (not (at monkey p6)))))
+    (and (has_banana) (has_water) (has_glass) (or (and (at box p1) (at knife p1) (not (at monkey p1))) (and (at box p6) (at knife p6) (not (at monkey p6)))))
   )
 )
