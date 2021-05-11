@@ -22,7 +22,7 @@
     (has_banana)
     (has_glass)
     (has_water)
-    (banana_on_floor)
+    (banana_ground_level)
   )
 
   (:action go
@@ -45,8 +45,8 @@
 
   (:action take_banana
     :parameters (?position - location)
-    :precondition (and (or (and (not (low)) (has_knife)) (banana_on_floor)) (at monkey ?position) (not (has_banana)) (or (not (has_water)) (not (has_knife))) (at banana ?position))
-    :effect (and (has_banana) (not (at banana ?position)))
+    :precondition (and (or (and (not (low)) (has_knife)) (banana_ground_level)) (at monkey ?position) (not (has_banana)) (or (not (has_water)) (not (has_knife))) (at banana ?position))
+    :effect (and (has_banana) (not (at banana ?position)) (banana_ground_level))
   )
 
   (:action take_knife
@@ -64,7 +64,7 @@
   (:action release_banana
     :parameters (?position - location)
     :precondition (and (has_banana) (at monkey ?position))
-    :effect (and (not (has_banana)) (at banana ?position) (banana_on_floor))
+    :effect (and (not (has_banana)) (at banana ?position))
   )
 
   (:action release_knife

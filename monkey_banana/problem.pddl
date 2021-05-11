@@ -13,7 +13,7 @@
     (not(has_knife))
     (not(has_water))
     (not(has_glass))
-    (not(banana_on_floor))
+    (not(banana_ground_level))
     (at monkey p1)
     (at banana p3)
     (at box p2)
