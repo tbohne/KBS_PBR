@@ -22,6 +22,7 @@
     (has_banana)
     (has_glass)
     (has_water)
+    (banana_on_floor)
   )
 
   (:action go
@@ -44,38 +45,38 @@
 
   (:action take_banana
     :parameters (?position - location)
-    :precondition (and (not (low)) (has_knife) (at monkey ?position) (at banana ?position))
-    :effect (and (has_banana))
+    :precondition (and (or (and (not (low)) (has_knife)) (banana_on_floor)) (at monkey ?position) (not (has_banana)) (or (not (has_water)) (not (has_knife))) (at banana ?position))
+    :effect (and (has_banana) (not (at banana ?position)))
   )
 
   (:action take_knife
     :parameters (?position - location)
-    :precondition (and (at monkey ?position) (at knife ?position))
-    :effect (and (has_knife))
+    :precondition (and (at monkey ?position) (not (has_knife)) (or (not (has_water)) (not (has_banana))) (at knife ?position))
+    :effect (and (has_knife) (not (at knife ?position)))
   )
 
   (:action take_glass
     :parameters (?position - location)
-    :precondition (and (not (low)) (at monkey ?position) (at glass ?position))
-    :effect (and (has_glass))
+    :precondition (and (not (low)) (not (has_glass)) (at monkey ?position) (at glass ?position))
+    :effect (and (has_glass) (not (at glass ?position)))
   )
 
   (:action release_banana
     :parameters (?position - location)
     :precondition (and (has_banana) (at monkey ?position))
-    :effect (and (not (has_banana)) (at banana ?position) (at monkey ?position))
+    :effect (and (not (has_banana)) (at banana ?position) (banana_on_floor))
   )
 
   (:action release_knife
     :parameters (?position - location)
     :precondition (and (has_knife) (at monkey ?position))
-    :effect (and (not (has_knife)) (at knife ?position) (at monkey ?position))
+    :effect (and (not (has_knife)) (at knife ?position))
   )
 
   (:action release_glass
     :parameters (?position - location)
     :precondition (and (has_glass) (at monkey ?position))
-    :effect (and (not (has_glass)) (at glass ?position) (at monkey ?position))
+    :effect (and (not (has_glass)) (at glass ?position))
   )
 
   (:action push_box
@@ -86,7 +87,7 @@
 
   (:action fetch_water
     :parameters (?position - location)
-    :precondition (and (has_glass) (not (low)) (at monkey ?position) (at watertap ?position) (or (not (has_banana)) (not (has_knife))))
+    :precondition (and (has_glass) (not (low)) (at monkey ?position) (at watertap ?position) (not (has_banana)) (not (has_knife)))
     :effect (and (has_water))
   )
 )
