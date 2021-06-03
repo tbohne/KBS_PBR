@@ -3,22 +3,21 @@
 (ArgumentSymbols
 
   # Waypoints
-  table0_wp table1_wp
-  lab1_wp
+  table0_wp table1_wp lab1_wp
 
   # Areas (on tables)
   table0_area table1_area
 
   # Physical_objects
-  powerdrill0
-  nothing
+  powerdrill0 nothing
 
   # Arm_postures
   tucked_posture undefined_posture
 
   # Constant_symbols
   true false
-  n)
+  n
+)
 
 (Fluent f0 mobipick_at(table0_wp))
 (Fluent f1 mobipick_holding(nothing))
@@ -36,6 +35,5 @@
 (Constraint Release[0,0](f101))
 
 # Goal task
-(Task t0 move_object(powerdrill0 table1_area))
-
+  (Task t0 move_object(powerdrill0 table1_area))
 )
