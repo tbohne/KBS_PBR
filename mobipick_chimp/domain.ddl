@@ -30,6 +30,7 @@
   (Pre p1 mobipick_at(?location))
   (Pre p2 on(?object ?area))
   (Pre p3 reachable_from(?area ?location))
+  (Add e1 mobipick_has_arm_posture(undefined_posture))
   (Constraint Duration[4000,INF](task))
 )
 
