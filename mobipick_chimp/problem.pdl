@@ -2,19 +2,19 @@
 
 (ArgumentSymbols
 
-  # Waypoints
+  # waypoints
   table0_wp table1_wp lab1_wp
 
-  # Areas (on tables)
+  # areas (on tables)
   table0_area table1_area
 
-  # Physical_objects
+  # physical objects
   powerdrill0 nothing
 
-  # Arm_postures
+  # arm postures
   tucked_posture undefined_posture
 
-  # Constant_symbols
+  # constant symbols
   true false
   n
 )
@@ -22,9 +22,11 @@
 (Fluent f0 mobipick_at(table0_wp))
 (Fluent f1 mobipick_holding(nothing))
 (Fluent f2 mobipick_has_arm_posture(undefined_posture))
+(Fluent f3 worker_at(lab1_wp))
 (Constraint Release[0,0](f0))
 (Constraint Release[0,0](f1))
 (Constraint Release[0,0](f2))
+(Constraint Release[0,0](f3))
 
 (Fluent f10 on(powerdrill0 table0_area))
 (Constraint Release[0,0](f10))
@@ -34,6 +36,7 @@
 (Constraint Release[0,0](f100))
 (Constraint Release[0,0](f101))
 
-# Goal task
-  (Task t0 move_object(powerdrill0 table1_area))
+# goal task
+  #(Task t0 move_object(powerdrill0 table1_area))
+  (Task t1 bring(powerdrill0))
 )
