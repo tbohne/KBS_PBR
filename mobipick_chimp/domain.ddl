@@ -4,11 +4,11 @@
 
 (PredicateSymbols
   # predicates
-  mobipick_at mobipick_has_arm_posture mobipick_holding on reachable_from
+  mobipick_at worker_at mobipick_has_arm_posture mobipick_holding on reachable_from
   # operators
   !move_base !perceive_object !pick !place !move_arm !hand_over
   # methods
-  move_object get_object put_object
+  move_object get_object put_object bring
 )
 
 # OPERATORS
@@ -66,6 +66,17 @@
   (Del p2)
   (Add e1 mobipick_holding(nothing))
   (Add e2 on(?object ?area))
+  (Constraint Duration[2000,INF](task))
+)
+
+# hand_over
+(:operator
+  (Head !hand_over(?object))
+  (Pre p1 worker_at(?waypoint))
+  (Pre p2 mobipick_at(?waypoint))
+  (Pre p3 mobipick_holding(?object))
+  (Del p3)
+  (Add e1 mobipick_holding(nothing))
   (Constraint Duration[2000,INF](task))
 )
 
@@ -141,4 +152,25 @@
   (Constraint Before(s2,s3))
   (Constraint Starts(s1,task))
   (Constraint Finishes(s3,task))
+)
+
+# bring object to worker
+(:method
+  (Head bring(?object))
+  (Pre p1 on(?object ?fromArea))
+  (Pre p2 worker_at(?destination))
+  (Pre p3 mobipick_at(?source))
+  (Sub s1 get_object(?object ?fromArea))
+  (Sub s2 !move_arm(undefined_posture tucked_posture))
+  (Sub s3 !move_base(?source ?destination))
+  (Sub s4 !hand_over(?object))
+  (Ordering s1 s2)
+  (Ordering s2 s3)
+  (Ordering s3 s4)
+  (Constraint Before(s1,s2))
+  (Constraint Before(s2,s3))
+  (Constraint Before(s3,s4))
+  (Constraint Starts(s1,task))
+  (Constraint Finishes(s4,task))
+  (Constraint Duration[20000,INF](task))
 )
