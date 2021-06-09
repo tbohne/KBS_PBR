@@ -1,6 +1,6 @@
 (HybridHTNDomain Mobipick)
 
-(MaxArgs 5)
+(MaxArgs 5) # for fluents
 
 (PredicateSymbols
   # predicates
@@ -11,7 +11,9 @@
   move_object get_object put_object bring
 )
 
-# OPERATORS
+###################################################################
+############################ OPERATORS ############################
+###################################################################
 
 # move_base
 (:operator
@@ -80,6 +82,10 @@
   (Constraint Duration[2000,INF](task))
 )
 
+###################################################################
+############################# METHODS #############################
+###################################################################
+
 # move object to destination area
 (:method
   (Head move_object(?object ?toArea))
@@ -93,7 +99,7 @@
   (Constraint Duration[20000,INF](task))
 )
 
-# already at correct waypoint
+# get_object -> already at correct waypoint
 (:method
   (Head get_object(?object ?fromArea))
   (Pre p1 on(?object ?fromArea))
@@ -107,7 +113,7 @@
   (Constraint Finishes(s2,task))
 )
 
-# needs to move there
+# get_object -> needs to move there
 (:method
   (Head get_object(?object ?fromArea))
   (Pre p1 on(?object ?fromArea))
@@ -127,7 +133,7 @@
   (Constraint Finishes(s4,task))
 )
 
-# already at correct waypoint
+# put_object -> already at correct waypoint
 (:method
   (Head put_object(?object ?toArea))
   (Pre p1 mobipick_holding(?object))
@@ -137,7 +143,7 @@
   (Constraint Starts(s1,task))
 )
 
-# needs to move there
+# put_object -> needs to move there
 (:method
   (Head put_object(?object ?toArea))
   (Pre p1 mobipick_holding(?object))
