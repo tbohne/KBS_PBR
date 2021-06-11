@@ -35,7 +35,7 @@
     ; method -> method in CHIMP
 
     (:method m_move_object_1_ordering_0
-        :parameters (?item - item ?toArea - area)
+        :parameters (?item - item ?toArea - area ?fromArea - area)
         :task (move_object ?item ?toArea)
         :precondition (and
             (on ?item ?fromArea)
@@ -50,7 +50,7 @@
     )
 
     (:method m_get_object_1_ordering_0
-        :parameters (?item - item ?fromArea - area)
+        :parameters (?item - item ?fromArea - area ?destination - waypoint)
         :task (get_object ?item ?fromArea)
         :precondition (and
             (on ?item ?fromArea)
@@ -67,7 +67,7 @@
     )
 
     (:method m_get_object_2_ordering_0
-        :parameters (?item - item ?fromArea - area)
+        :parameters (?item - item ?fromArea - area ?waypoint - waypoint ?destination - waypoint ?old_posture - posture ?new_posture - posture)
         :task (get_object ?item ?fromArea)
         :precondition (and
             (on ?item ?fromArea)
@@ -88,7 +88,7 @@
     )
 
     (:method m_put_object_1_ordering_0
-        :parameters (?item - item ?toArea - area)
+        :parameters (?item - item ?toArea - area ?destination - waypoint)
         :task (put_object ?item ?toArea)
         :precondition (and
             (mobipick_holding ?item)
@@ -102,7 +102,7 @@
     )
 
     (:method m_put_object_2_ordering_0
-        :parameters (?item - item ?toArea - area)
+        :parameters (?item - item ?toArea - area ?waypoint - waypoint ?destination - waypoint ?old_posture - posture ?new_posture - posture)
         :task (put_object ?item ?toArea)
         :precondition (and
             (mobipick_holding ?item)
@@ -137,7 +137,7 @@
     )
 
     (:action perceive_object
-        :parameters (?object - item ?location - waypoint)
+        :parameters (?object - item ?location - waypoint ?area - area)
         :precondition
             (and
                 (mobipick_at ?location)
@@ -164,7 +164,7 @@
     )
 
     (:action pick
-        :parameters (?object - item ?area - area)
+        :parameters (?object - item ?area - area ?waypoint - waypoint)
         :precondition
             (and
                 (on ?object ?area)
@@ -181,7 +181,7 @@
     )
 
     (:action place
-        :parameters (?object - item ?area - area)
+        :parameters (?object - item ?area - area ?waypoint - waypoint)
         :precondition
             (and
                 (mobipick_at ?waypoint)
