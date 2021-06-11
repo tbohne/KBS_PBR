@@ -1,0 +1,30 @@
+(define
+    (problem pfile1)
+    (:domain  mobipick_domain)
+    (:objects
+        table0_wp - waypoint
+        table1_wp - waypoint
+        lab1_wp - waypoint
+        table0_area - area
+        table1_area - area
+        powerdrill0 - item
+        nothing - item
+        tucked_posture - posture
+        undefined_posture - posture
+    )
+    (:htn
+        :parameters ()
+        :subtasks (and
+         (task0 (move_object powerdrill0 table1_area))
+        )
+        :ordering ()
+    )
+    (:init
+        (mobipick_at table0_wp)
+        (mobipick_holding nothing)
+        (mobipick_has_arm_posture undefined_posture)
+        (on powerdrill0 table0_area)
+        (reachable_from table0_area table0_wp)
+        (reachable_from table1_area table1_wp)
+    )
+)

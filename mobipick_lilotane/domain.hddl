@@ -1,0 +1,197 @@
+(define (domain mobipick_domain)
+    (:requirements :negative-preconditions
+        :hierarchy
+        :typing
+        :method-preconditions
+    )
+    (:types
+        waypoint - object
+        posture - object
+        item - object
+        area - object
+    )
+    (:predicates
+        (mobipick_at ?arg0 - waypoint)
+        (mobipick_has_arm_posture ?arg0 - posture)
+        (mobipick_holding ?arg0 - item)
+        (on ?arg0 - item ?arg1 - area)
+        (reachable_from ?arg0 - area ?arg1 - waypoint)
+    )
+
+    ; task -> method head in CHIMP?
+
+    (:task move_object
+        :parameters (?item - item ?toArea - area)
+    )
+
+    (:task get_object
+        :parameters (?item - item ?fromArea - area)
+    )
+
+    (:task put_object
+        :parameters (?item - item ?toArea - area)
+    )
+
+    ; method -> method in CHIMP
+
+    (:method m_move_object_1_ordering_0
+        :parameters (?item - item ?toArea - area)
+        :task (move_object ?item ?toArea)
+        :precondition (and
+            (on ?item ?fromArea)
+        )
+        :subtasks (and
+            (task0 (get_object ?item ?fromArea))
+            (task1 (put_object ?item ?toArea))
+        )
+        :ordering (and
+            (< task0 task1)
+        )
+    )
+
+    (:method m_get_object_1_ordering_0
+        :parameters (?item - item ?fromArea - area)
+        :task (get_object ?item ?fromArea)
+        :precondition (and
+            (on ?item ?fromArea)
+            (reachable_from ?fromArea ?destination)
+            (mobipick_at ?destination)
+        )
+        :subtasks (and
+            (task0 (perceive_object ?item ?destination))
+            (task1 (pick ?item ?fromArea))
+        )
+        :ordering (and
+            (< task0 task1)
+        )
+    )
+
+    (:method m_get_object_2_ordering_0
+        :parameters (?item - item ?fromArea - area)
+        :task (get_object ?item ?fromArea)
+        :precondition (and
+            (on ?item ?fromArea)
+            (mobipick_at ?waypoint)
+            (reachable_from ?fromArea ?destination)
+        )
+        :subtasks (and
+            (task0 (move_arm ?old_posture ?new_posture))
+            (task1 (move_base ?waypoint ?destination))
+            (task2 (perceive_object ?item ?destination))
+            (task3 (pick ?item ?fromArea))
+        )
+        :ordering (and
+            (< task0 task1)
+            (< task1 task2)
+            (< task2 task3)
+        )
+    )
+
+    (:method m_put_object_1_ordering_0
+        :parameters (?item - item ?toArea - area)
+        :task (put_object ?item ?toArea)
+        :precondition (and
+            (mobipick_holding ?item)
+            (reachable_from ?toArea ?destination)
+            (mobipick_at ?destination)
+        )
+        :subtasks (and
+            (task0 (place ?item ?toArea))
+        )
+        :ordering ()
+    )
+
+    (:method m_put_object_2_ordering_0
+        :parameters (?item - item ?toArea - area)
+        :task (put_object ?item ?toArea)
+        :precondition (and
+            (mobipick_holding ?item)
+            (mobipick_at ?waypoint)
+            (reachable_from ?toArea ?destination)
+        )
+        :subtasks (and
+            (task0 (move_arm ?old_posture ?new_posture))
+            (task1 (move_base ?waypoint ?destination))
+            (task2 (place ?item ?toArea))
+        )
+        :ordering (and
+            (< task0 task1)
+            (< task1 task2)
+        )
+    )
+
+    ; actions -> operators in CHIMP
+
+    (:action move_base
+        :parameters (?source - waypoint ?destination - waypoint)
+        :precondition
+            (and
+                (mobipick_at ?source)
+                (mobipick_has_arm_posture tucked_posture)
+            )
+        :effect
+            (and
+                (not (mobipick_at ?source))
+                (mobipick_at ?destination)
+            )
+    )
+
+    (:action perceive_object
+        :parameters (?object - item ?location - waypoint)
+        :precondition
+            (and
+                (mobipick_at ?location)
+                (on ?object ?area)
+                (reachable_from ?area ?location)
+            )
+        :effect
+            (and
+                (mobipick_has_arm_posture undefined_posture)
+            )
+    )
+
+    (:action move_arm
+        :parameters (?old_posture - posture ?new_posture - posture)
+        :precondition
+            (and
+                (mobipick_has_arm_posture ?old_posture)
+            )
+        :effect
+            (and
+                (not (mobipick_has_arm_posture ?old_posture))
+                (mobipick_has_arm_posture ?new_posture)
+            )
+    )
+
+    (:action pick
+        :parameters (?object - item ?area - area)
+        :precondition
+            (and
+                (on ?object ?area)
+                (mobipick_at ?waypoint)
+                (reachable_from ?area ?waypoint)
+                (mobipick_holding nothing)
+            )
+        :effect
+            (and
+                (not (on ?object ?area))
+                (not (mobipick_holding nothing))
+                (mobipick_holding ?object)
+            )
+    )
+
+    (:action place
+        :parameters (?object - item ?area - area)
+        :precondition
+            (and
+                (mobipick_at ?waypoint)
+                (mobipick_holding ?object)
+                (reachable_from ?area ?waypoint)
+            )
+        :effect
+            (and
+                (not (mobipick_holding ?object))
+                (on ?object ?area)
+            )
+    )
+)
