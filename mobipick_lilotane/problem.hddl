@@ -11,17 +11,21 @@
         nothing - item
         tucked_posture - posture
         undefined_posture - posture
+        worker0 - worker
     )
     (:htn
         :parameters ()
         :subtasks (and
-         (task0 (move_object powerdrill0 table1_area))
+         ;(task0 (move_object powerdrill0 table1_area))
+         (task0 (bring_object worker0 powerdrill0 table0_area table1_wp table0_wp))
         )
         :ordering ()
     )
     (:init
         (mobipick_at table0_wp)
+        (worker_at table1_wp worker0)
         (mobipick_holding nothing)
+        (worker_holding nothing worker0)
         (mobipick_has_arm_posture undefined_posture)
         (on powerdrill0 table0_area)
         (reachable_from table0_area table0_wp)

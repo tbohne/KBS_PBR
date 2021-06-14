@@ -9,11 +9,14 @@
         posture - object
         item - object
         area - object
+        worker - object
     )
     (:predicates
         (mobipick_at ?arg0 - waypoint)
+        (worker_at ?arg0 - waypoint ?arg1 - worker)
         (mobipick_has_arm_posture ?arg0 - posture)
         (mobipick_holding ?arg0 - item)
+        (worker_holding ?arg0 - item ?arg1 - worker)
         (on ?arg0 - item ?arg1 - area)
         (reachable_from ?arg0 - area ?arg1 - waypoint)
     )
@@ -32,6 +35,10 @@
 
     (:task put_object
         :parameters (?item - item ?toArea - area)
+    )
+
+    (:task bring_object
+        :parameters (?worker - worker ?object - item ?fromArea - area ?destination - waypoint ?source - waypoint)
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -53,6 +60,7 @@
         )
     )
 
+    ; GET OBJECT - ALREADY THERE
     (:method m_get_object_1_ordering_0
         :parameters (?item - item ?fromArea - area ?destination - waypoint)
         :task (get_object ?item ?fromArea)
@@ -70,6 +78,7 @@
         )
     )
 
+    ; GET OBJECT - NEEDS TO MOVE
     (:method m_get_object_2_ordering_0
         :parameters (?item - item ?fromArea - area ?waypoint - waypoint ?destination - waypoint ?old_posture - posture ?new_posture - posture)
         :task (get_object ?item ?fromArea)
@@ -91,6 +100,7 @@
         )
     )
 
+    ; PUT OBJECT - ALREADY THERE
     (:method m_put_object_1_ordering_0
         :parameters (?item - item ?toArea - area ?destination - waypoint)
         :task (put_object ?item ?toArea)
@@ -105,6 +115,7 @@
         :ordering ()
     )
 
+    ; PUT OBJECT - NEEDS TO MOVE
     (:method m_put_object_2_ordering_0
         :parameters (?item - item ?toArea - area ?waypoint - waypoint ?destination - waypoint ?old_posture - posture ?new_posture - posture)
         :task (put_object ?item ?toArea)
@@ -121,6 +132,28 @@
         :ordering (and
             (< task0 task1)
             (< task1 task2)
+        )
+    )
+
+    ; BRING OBJECT - NEEDS TO MOVE
+    (:method m_bring_object_1_ordering_0
+        :parameters (?worker - worker ?object - item ?fromArea - area ?destination - waypoint ?source - waypoint)
+        :task (bring_object ?worker ?object ?fromArea ?destination ?source)
+        :precondition (and
+            (on ?object ?fromArea)
+            (worker_at ?destination ?worker)
+            (mobipick_at ?source)
+        )
+        :subtasks (and
+            (task0 (get_object ?object ?fromArea))
+            (task1 (move_arm undefined_posture tucked_posture))
+            (task2 (move_base ?source ?destination))
+            (task3 (handover_give ?object ?worker))
+        )
+        :ordering (and
+            (< task0 task1)
+            (< task1 task2)
+            (< task2 task3)
         )
     )
 
@@ -201,6 +234,42 @@
                 (not (mobipick_holding ?object))
                 (on ?object ?area)
                 (mobipick_holding nothing)
+            )
+    )
+
+    (:action handover_give
+        :parameters (?object - item ?worker - worker ?waypoint - waypoint)
+        :precondition
+            (and
+                (mobipick_at ?waypoint)
+                (worker_at ?waypoint ?worker)
+                (mobipick_holding ?object)
+                (worker_holding nothing ?worker)
+            )
+        :effect
+            (and
+                (not (mobipick_holding ?object))
+                (not (worker_holding nothing ?worker))
+                (worker_holding ?object ?worker)
+                (mobipick_holding nothing)
+            )
+    )
+
+    (:action handover_take
+        :parameters (?object - item ?worker - worker ?waypoint - waypoint)
+        :precondition
+            (and
+                (mobipick_at ?waypoint)
+                (worker_at ?waypoint ?worker)
+                (mobipick_holding nothing)
+                (worker_holding ?object ?worker)
+            )
+        :effect
+            (and
+                (not (worker_holding ?object ?worker))
+                (not (mobipick_holding nothing))
+                (worker_holding nothing ?worker)
+                (mobipick_holding ?object)
             )
     )
 )
