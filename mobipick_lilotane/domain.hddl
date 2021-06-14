@@ -128,6 +128,7 @@
             (and
                 (mobipick_at ?source)
                 (mobipick_has_arm_posture tucked_posture)
+                (not (= ?source ?destination))
             )
         :effect
             (and
