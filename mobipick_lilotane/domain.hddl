@@ -205,71 +205,83 @@
     )
 
     (:action pick
-        :parameters (?object - item ?area - area ?waypoint - waypoint)
+        :parameters (?object - item ?area - area ?waypoint - waypoint ?old_posture - posture)
         :precondition
             (and
                 (on ?object ?area)
                 (mobipick_at ?waypoint)
                 (reachable_from ?area ?waypoint)
                 (mobipick_holding nothing)
+                (mobipick_has_arm_posture ?old_posture)
             )
         :effect
             (and
                 (not (on ?object ?area))
                 (not (mobipick_holding nothing))
+                (not (mobipick_has_arm_posture ?old_posture))
                 (mobipick_holding ?object)
+                (mobipick_has_arm_posture undefined_posture)
             )
     )
 
     (:action place
-        :parameters (?object - item ?area - area ?waypoint - waypoint)
+        :parameters (?object - item ?area - area ?waypoint - waypoint ?old_posture - posture)
         :precondition
             (and
                 (mobipick_at ?waypoint)
                 (mobipick_holding ?object)
                 (reachable_from ?area ?waypoint)
+                (mobipick_has_arm_posture ?old_posture)
             )
         :effect
             (and
                 (not (mobipick_holding ?object))
+                (not (mobipick_has_arm_posture ?old_posture))
                 (on ?object ?area)
                 (mobipick_holding nothing)
+                (mobipick_has_arm_posture undefined_posture)
             )
     )
 
     (:action handover_give
-        :parameters (?object - item ?worker - worker ?waypoint - waypoint)
+        :parameters (?object - item ?worker - worker ?waypoint - waypoint ?old_posture - posture)
         :precondition
             (and
                 (mobipick_at ?waypoint)
                 (worker_at ?waypoint ?worker)
                 (mobipick_holding ?object)
                 (worker_holding nothing ?worker)
+                (mobipick_has_arm_posture ?old_posture)
             )
         :effect
             (and
                 (not (mobipick_holding ?object))
                 (not (worker_holding nothing ?worker))
+                (not (mobipick_has_arm_posture ?old_posture))
                 (worker_holding ?object ?worker)
                 (mobipick_holding nothing)
+                (mobipick_has_arm_posture undefined_posture)
             )
     )
 
     (:action handover_take
-        :parameters (?object - item ?worker - worker ?waypoint - waypoint)
+        :parameters (?object - item ?worker - worker ?waypoint - waypoint ?old_posture - posture)
         :precondition
             (and
                 (mobipick_at ?waypoint)
                 (worker_at ?waypoint ?worker)
                 (mobipick_holding nothing)
                 (worker_holding ?object ?worker)
+                (mobipick_has_arm_posture ?old_posture)
             )
         :effect
             (and
                 (not (worker_holding ?object ?worker))
                 (not (mobipick_holding nothing))
+                (not (mobipick_has_arm_posture ?old_posture))
                 (worker_holding nothing ?worker)
                 (mobipick_holding ?object)
+                (mobipick_has_arm_posture undefined_posture)
             )
     )
 )
